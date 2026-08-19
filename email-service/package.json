@@ -1,0 +1,18 @@
+{
+  "name": "livro-archive-email-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "SMTP transport for Livro Archive transactional mail. Deployed independently of the storefront.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  }
+}

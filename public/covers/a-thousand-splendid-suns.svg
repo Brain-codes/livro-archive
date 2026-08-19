@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="854" viewBox="0 0 640 854" role="img" aria-label="A Thousand Splendid Suns">
+  <rect width="640" height="854" fill="#7E9E8E"/>
+  <rect x="34" y="0" width="3" height="854" fill="#2F4F3E" opacity="0.5"/>
+  <rect x="80" y="120" width="120" height="4" fill="#2F4F3E"/>
+  <text x="80" y="269.76" font-family="Georgia, 'Times New Roman', serif" font-size="54" fill="#17251E">A Thousand</text><text x="80" y="330.24" font-family="Georgia, 'Times New Roman', serif" font-size="54" fill="#17251E">Splendid Suns</text>
+  <text x="80" y="740" font-family="Helvetica, Arial, sans-serif" font-size="22" letter-spacing="1.5" fill="#17251E" opacity="0.75">KHALED HOSSEINI</text>
+  <text x="80" y="790" font-family="Helvetica, Arial, sans-serif" font-size="15" letter-spacing="3" fill="#17251E" opacity="0.5">LIVRO ARCHIVE</text>
+</svg>

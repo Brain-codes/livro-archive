@@ -46,7 +46,7 @@ export default function AccountPage() {
         </p>
         <div className="flex justify-center gap-3">
           <Link href="/auth/sign-in"><Button size="lg">Sign in</Button></Link>
-          <Link href="/track"><Button variant="secondary" size="lg">Track an order</Button></Link>
+          <Link href="/track"><Button variant="outline" size="lg">Track an order</Button></Link>
         </div>
       </div>
     );

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="854" viewBox="0 0 640 854" role="img" aria-label="Born a Crime">
+  <rect width="640" height="854" fill="#B08238"/>
+  <rect x="34" y="0" width="3" height="854" fill="#6B4E1D" opacity="0.5"/>
+  <rect x="80" y="120" width="120" height="4" fill="#6B4E1D"/>
+  <text x="80" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="54" fill="#241B0C">Born a Crime</text>
+  <text x="80" y="740" font-family="Helvetica, Arial, sans-serif" font-size="22" letter-spacing="1.5" fill="#241B0C" opacity="0.75">TREVOR NOAH</text>
+  <text x="80" y="790" font-family="Helvetica, Arial, sans-serif" font-size="15" letter-spacing="3" fill="#241B0C" opacity="0.5">LIVRO ARCHIVE</text>
+</svg>

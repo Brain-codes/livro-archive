@@ -26,22 +26,39 @@ Persistent notes across sessions. Read this first when resuming work.
 ## Dummy catalog data
 - 44 products seeded via `supabase/migrations/20260819000300_seed_catalog.sql`
   (books across all 7 categories + stationery), 3 bundles, a few variant-bearing
-  products (paperback/hardcover, journal colors). Cover art is placeholder
-  `picsum.photos` images seeded by slug — swap for real covers before going live
-  (picsum is allowed in `next.config.ts` remotePatterns purely for this placeholder
-  use).
+  products (paperback/hardcover, journal colours). Cover art is now generated SVG —
+  see "Placeholder imagery" below.
 
-## Design system revision (user didn't like v1)
-- Replaced the original terracotta/gold "craft shop" palette with an editorial,
-  near-monochrome one (warm paper + near-black ink, one oxblood accent) and swapped
-  Fraunces for Cormorant Garamond as the display serif, paired with Inter. Full
-  rationale and token table in `design.md` §1 ("v2 — revised after design review").
-  Chosen via the `ui-ux-pro-max` skill's design-system search
-  (`bookstore ecommerce editorial premium literary`), then adapted (dropped the
-  suggested pink accent for oxblood — closer to "soothing, not gendered, not neon").
-- A light/dark theme toggle now lives in the footer (`ThemeToggle.tsx`), backed by
-  `data-theme` on `<html>` + localStorage, with a blocking init script in
-  `layout.tsx` to avoid a flash of the wrong theme.
+## Design system — v3, Skanvi-referenced (two rejected attempts before this)
+- v1 (terracotta/gold + Fraunces) and v2 (oxblood + Cormorant Garamond) were both
+  rejected by the user as not good enough / bland. **Do not go back to either.**
+- v3 is modelled on **skanvi.com**, which the user supplied as the explicit reference
+  along with screenshots in `design ideas/` (storefront) and
+  `design ideas/dashboard design ideas/` (console). Warm cream canvas `#FDF6EC`,
+  near-black ink, one forest green `#2F4F3E`, sage `#7E9E8E` band, **Archivo** display
+  + **Inter** body, pill controls. Full spec and component anatomy in `design.md`.
+- Storefront sections deliberately mirror the reference: flush hero panel + two offset
+  images with bottom-right label pills; "What are you looking for?" cutout rail with
+  edge arrows; editorial bento (1 tall + 2 stacked, text bottom-left over a wash);
+  full-bleed sage featured band; forest newsletter card; four-column footer.
+- The console follows the dashboard screenshots: grouped sidebar, a *featured* forest
+  KPI card leading the row, hand-rolled SVG charts, and an order **detail drawer** on
+  the right of a dense table.
+- Everything is token-driven — a palette change is one file (`globals.css`).
+
+## Placeholder imagery
+- `scripts/generate-covers.mjs` generates 44 flat SVG book jackets / stationery cards
+  into `public/covers/`, applied to the DB by migration `20260819000700`. Random
+  picsum photos made a bookshop look like a travel blog. Replace with real photography
+  by updating `product_images.url` — no code change needed.
+- `next.config.ts` enables `dangerouslyAllowSVG` **only** because these are
+  first-party generated files. Never enable it for user uploads.
+
+## Gotcha: stale Next.js data cache
+- `next build` reuses `.next/cache` fetch results across builds. After changing data
+  in Supabase, a plain rebuild can still serve the old payload. `rm -rf .next` before
+  rebuilding when verifying data changes. Also: kill the old `next start` before
+  starting a new one, or you silently keep hitting the stale server.
 
 ## Credentials on file
 - Supabase URL: `https://buezylclznarpsawhiok.supabase.co`
@@ -51,18 +68,6 @@ Persistent notes across sessions. Read this first when resuming work.
 - Paystack keys: not yet provided — user said credentials come later. Payment edge
   function is being built to read `PAYSTACK_SECRET_KEY` from env; will not work until
   supplied.
-
-## Design system — single source of truth (user feedback, mid-build)
-- Every color, font, and commonly-reused size lives ONLY as a CSS variable / `@theme`
-  token in `src/app/globals.css` (see `design.md` §1). Components consume them via
-  Tailwind utilities generated from those tokens (`bg-canvas`, `text-ink`,
-  `text-ink-muted`, `bg-primary`, `font-display`, etc.) — never raw hex, never a
-  one-off px value for something that already has a token. Change a color or font in
-  one place (`globals.css`) and it updates everywhere, admin included — the admin
-  console deliberately reuses the storefront's tokens rather than a separate palette
-  (unlike the Afrojazz admin, which intentionally forked its own — Livro Archive does
-  not do that). Only truly one-off/rare values may be hardcoded inline, and only when
-  no token fits.
 
 ## Architecture correction (user feedback, mid-build)
 - **No hardcoded store config.** Anything store-wide — currency, shipping fee,

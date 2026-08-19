@@ -47,6 +47,29 @@ export async function getCallerFromRequest(
   };
 }
 
+/**
+ * True when the caller presented the service-role key — i.e. this is a server-to-server
+ * call (pg_cron, another Edge Function), not a browser. Accepts both the JWT-style key
+ * and the newer opaque `sb_secret_…` format, since the two coexist on a project.
+ */
+export function isServiceRole(req: Request): boolean {
+  const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "").trim();
+  if (!token) return false;
+
+  const envKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (envKey && token === envKey) return true;
+
+  try {
+    const [, payload] = token.split(".");
+    const decoded = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/")),
+    );
+    return decoded.role === "service_role";
+  } catch {
+    return false;
+  }
+}
+
 /** Coarse role check — kept for endpoints that only care about customer vs staff/admin. */
 export function requireRole(
   user: AuthedUser | null,

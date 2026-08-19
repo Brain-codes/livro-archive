@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="854" viewBox="0 0 640 854" role="img" aria-label="The Alchemist">
+  <rect width="640" height="854" fill="#3A3630"/>
+  <rect x="34" y="0" width="3" height="854" fill="#B08238" opacity="0.5"/>
+  <rect x="80" y="120" width="120" height="4" fill="#B08238"/>
+  <text x="80" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="54" fill="#F2EDE2">The Alchemist</text>
+  <text x="80" y="740" font-family="Helvetica, Arial, sans-serif" font-size="22" letter-spacing="1.5" fill="#F2EDE2" opacity="0.75">PAULO COELHO</text>
+  <text x="80" y="790" font-family="Helvetica, Arial, sans-serif" font-size="15" letter-spacing="3" fill="#F2EDE2" opacity="0.5">LIVRO ARCHIVE</text>
+</svg>

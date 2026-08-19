@@ -6,3 +6,5 @@ node_modules
 *.log
 supabase/.branches
 supabase/.temp
+.playwright-mcp
+*.png.tmp

@@ -27,6 +27,17 @@ Deno.serve(async (req) => {
   }
 
   try {
+    if (req.method === "GET" && sub === "permissions") {
+      // The permission vocabulary lives in the database so the Roles screen never
+      // hardcodes it — adding a capability is a data change.
+      const { data, error } = await db
+        .from("permission_catalog")
+        .select("key, label, description")
+        .order("sort_order");
+      if (error) return errorResponse("Failed to list permissions", error.message, 500);
+      return successResponse(data, "Permissions fetched");
+    }
+
     if (req.method === "GET" && !sub) {
       const { data, error } = await db.from("admin_roles").select("*").order("created_at");
       if (error) return errorResponse("Failed to list roles", error.message, 500);

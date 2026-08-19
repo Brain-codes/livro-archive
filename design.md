@@ -1,145 +1,177 @@
 # Livro Archive — Design System
 
-Livro Archive is a books-and-stationery e-commerce platform. The brief: award-winning
-(Awwwards-tier) feel, but realistic and usable — rich, soothing, not neon, not punk, not
-gendered. Editorial-bookstore warmth meets modern SaaS polish. Must hold up in both light
-and dark mode.
+The source of truth for how Livro Archive looks. One system covers the storefront **and**
+the admin console — change a token here and both follow.
+
+**Direction:** modern Scandinavian-retail commerce (referenced against skanvi.com), adapted
+for a bookshop. Warm cream canvas, near-black type, one confident forest green, tight
+grotesque headlines, pill controls, generous whitespace. Premium and calm — not neon, not
+brutalist, not gendered.
 
 ---
 
-## 1. Design tokens
+## 1. Tokens — the only place colour and type are defined
 
-### Brand palette (v2 — revised after design review)
+Everything lives in [`src/app/globals.css`](src/app/globals.css) as CSS variables exposed
+through Tailwind v4 `@theme`. Components use the generated utilities (`bg-canvas`,
+`text-ink`, `bg-forest`, `font-display`) and **never raw hex**.
 
-An editorial, near-monochrome palette (warm paper + near-black ink, like a printed
-book) with one confident accent — oxblood/burgundy — used deliberately rather than
-scattered. Replaced the original terracotta/gold pairing, which read too "craft shop."
+### Surfaces
 
-| Token | Light value | Dark value | Use |
+| Token | Light | Dark | Use |
 |---|---|---|---|
-| `--color-canvas` | `#F7F5F0` | `#0B0A09` | Page background — warm paper / warm near-black |
-| `--color-surface` | `#FFFFFF` | `#17130F` | Cards, raised panels |
-| `--color-surface-muted` | `#EEEAE1` | `#201A15` | Secondary panels, table stripes |
-| `--color-ink` | `#16130F` | `#F5F1E9` | Primary text |
-| `--color-ink-muted` | `#6E675C` | `#A89D8C` | Secondary text |
-| `--color-border` | `#E1DBCD` | `#2C2419` | Hairlines |
-| `--color-primary` | `#7A2230` | `#E08A7D` | Oxblood — primary actions, links |
-| `--color-primary-ink` | `#5C1A24` | `#F2B2A8` | Primary text-on-light / accents |
-| `--color-accent` | `#2F5D50` | `#6FA98C` | Secondary accent — deep green (in-stock, success) |
-| `--color-gold` | `#A67C3D` | `#D9AC5C` | Highlights, ratings, bundle badges |
-| `--color-danger` | `#B3432E` | `#E2745A` | Errors, destructive actions |
+| `canvas` | `#FDF6EC` | `#12130F` | Page background — warm cream paper |
+| `surface` | `#FFFFFF` | `#1A1C17` | Cards, inputs, raised panels |
+| `surface-muted` | `#F2EDE3` | `#22251E` | Hero type panel, image wells, hover fills |
+| `surface-sunken` | `#EFECE6` | `#191B15` | Footer, newsletter band, console background |
 
-These live as CSS variables in `globals.css` under `@theme`, consumed via Tailwind v4
-utilities (`bg-canvas`, `text-ink`, etc.) — never raw hex in components. Because
-everything is token-driven, changing the palette again only ever means editing
-`globals.css`; nothing else should hardcode a color.
+### Ink
 
-### Typography (v2)
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| `ink` | `#1A1A18` | `#F4F1E8` | Primary text |
+| `ink-muted` | `#6B6B63` | `#A8A89B` | Secondary text |
+| `ink-faint` | `#9A9A90` | `#7C7C71` | Meta, placeholders, timestamps |
+| `border` | `#E6DFD2` | `#2E3128` | Hairlines |
+| `border-strong` | `#D5CBB8` | `#3D4136` | Outline buttons, focused edges |
+
+### Brand & accent
+
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| `forest` | `#2F4F3E` | `#8FB8A1` | **Primary action.** CTA pills, active nav, charts |
+| `forest-deep` | `#24402F` | `#A9CBB8` | Primary hover, mega-menu ground |
+| `sage` | `#7E9E8E` | `#7E9E8E` | The full-bleed featured band |
+| `sage-soft` | `#B9CEC3` | `#46564C` | Mega-menu links, soft info fills |
+| `clay` | `#C96F4A` | `#E08A63` | Low stock, badges, saved-heart fill |
+| `gold` | `#B08238` | `#D2A75D` | Bundles, "featured", warnings |
+| `danger` | `#B3432E` | `#E2745A` | Errors, destructive |
+| `success` | `#2F6D4F` | `#7CB894` | Paid, delivered, healthy stock |
+| `on-dark` | `#F7F3EA` | `#F7F3EA` | Text on forest/sage surfaces |
+
+Dark mode is a real design, not an inversion: the canvas goes warm near-black, and
+`forest` **lightens** so it still reads as the action colour against it.
+
+### Typography
 
 | Role | Family | Notes |
 |---|---|---|
-| Display / headings | **Cormorant Garamond** (serif, italic available) | Editorial, literary, higher-contrast strokes than the earlier Fraunces — the "book jacket" feel. Rendered at `font-weight: 600` by default (the thin 400 weight reads too delicate below hero size). |
-| Body / UI | **Inter** | Neutral, highly legible at small sizes |
-| Numeric / price | Inter, `tabular-nums` | Prices never jitter |
+| Display | **Archivo** 600 | Headlines, page titles, prices in hero. `letter-spacing: -0.03em`, `line-height: 1.04` — tight and confident |
+| Body / UI | **Inter** 400/500 | Everything else |
+| Numerals | Inter + `tabular-nums` | Prices, counts and stock never jitter |
 
-Scale: `text-5xl/6xl` hero, `text-3xl` section headers, `text-lg` card titles (bumped
-from `text-base` — Cormorant needs more size to stay legible at card scale), `text-sm`
-body, `text-xs` meta/labels.
+`h1–h3` and `.font-display` pick up Archivo automatically. Sizes are fluid:
+`text-[clamp(38px,5vw,68px)]` hero, `clamp(30px,4.2vw,54px)` section, `clamp(26px,3.6vw,44px)`
+product title.
 
-### Geometry
+**`.eyebrow`** is a global utility — 11px, 600, `0.14em` tracking, uppercase, `ink-muted`.
+It sits above nearly every section heading.
 
-- Cards: `rounded-2xl`, soft shadow in light mode, `ring-1 ring-white/5` in dark mode
-- Buttons/inputs: `rounded-full` for primary CTAs, `rounded-xl` for inputs and secondary
-  buttons — pill-only everywhere reads too "app-like" for a bookstore
-- Generous whitespace; 8pt spacing scale
-- Book covers: subtle `rotate-[-1deg]`/`rotate-[1deg]` on hover for a tactile, shelf feel
+### Geometry & motion
 
-### Motion (GSAP + Three.js, used deliberately — not decoration for its own sake)
-
-- **Hero**: GSAP ScrollTrigger-driven parallax of stacked book illustrations/covers;
-  a single lazy-loaded Three.js scene (a slowly rotating open book / floating pages)
-  gated behind `prefers-reduced-motion` and a capability check, same pattern as the
-  Turf Ball build's 3D gating
-- **Page transitions**: soft fade + 8px rise, 250–350ms, `power2.out`
-- **Product grid**: stagger-in on scroll (GSAP ScrollTrigger, batched), FLIP reorder for
-  filter/sort changes
-- **Cart drawer**: spring-in slide, item add gets a small "flight" animation from the
-  clicked card into the cart icon
-- **Micro-interactions**: button press scale (0.97), price count-up on discount reveal
-- Everything above respects `prefers-reduced-motion: reduce` — motion is a garnish, not
-  a requirement for comprehension
-
-### Accessibility
-
-- Never convey status by color alone (stock badges pair icon + text)
-- Contrast checked against both canvas tones (paper / near-black)
-- Focus ring: `ring-2 ring-primary/60 ring-offset-2 ring-offset-canvas`
+- Buttons and status pills: **fully round** (`rounded-full`)
+- Cards, images, panels: `rounded-xl` (12px) / `rounded-2xl` (16px)
+- Console panels and inputs: `rounded-lg` (8px) — denser than the storefront
+- Focus: `ring-2 ring-forest/50 ring-offset-2 ring-offset-canvas` on every control
+- Transitions 200–300ms; image hovers up to 700ms; press feedback `active:scale-[0.98]`
+- `prefers-reduced-motion` kills all of it globally in `globals.css`
 
 ---
 
-## 2. Layout structure — public site
+## 2. Storefront anatomy
 
-```
-src/app/(site)/layout.tsx        → SiteHeader, CartDrawerProvider, SiteFooter
-  page.tsx                        → Home (hero, featured, bundles, categories)
-  shop/page.tsx                   → Catalog (filters, sort, grid)
-  shop/[category]/page.tsx        → Category listing
-  product/[slug]/page.tsx         → PDP (gallery, price, bundle upsell, reviews)
-  cart/page.tsx                   → Full cart view
-  checkout/page.tsx               → Guest or authenticated checkout
-  checkout/success/page.tsx       → Order confirmation
-  track/page.tsx                  → Order lookup by order ID + email
-  track/[orderId]/page.tsx        → Live tracking timeline
-  account/*                       → Optional account area (orders, addresses, profile)
-  auth/*                          → Sign in / sign up / reset
-```
+The homepage sequence, in order:
 
-## 3. Admin console
+1. **Header** (`SiteHeader`) — wordmark, centred pill search, account/saved/basket icon
+   buttons. Second row: icon nav that opens the mega-menu, plus a forest "Track your
+   order" pill on the right.
+2. **Mega-menu** (`MegaMenu`) — full-screen `forest-deep` overlay, category links at
+   `clamp(28px,5.2vw,64px)` in `sage-soft`, an oversized ghosted "Livro" wordmark bleeding
+   off the bottom, GSAP stagger in, Escape to close.
+3. **Hero** (`Hero`) — 44/34/22 grid. A `surface-muted` type panel butted **flush** against
+   a tall image, then a shorter image inset and dropped lower. Each image carries a cream
+   label pill bottom-right. Real products, so the first thing you see is buyable.
+4. **Category rail** (`CategoryRail`) — cutouts floating directly on the canvas, no cards,
+   centred labels, circular arrows overlapping the rail edges that fade at either end.
+5. **Editorial bento** (`EditorialGrid`) — one tall panel plus two stacked. Artwork is
+   washed with `forest-deep/70` + a bottom gradient so it reads as atmosphere and the
+   panel's own headline stays loudest.
+6. **Featured band** (`FeaturedRail`) — full-bleed `sage`. Cards switch to the cream
+   surface via the `onSurface` prop.
+7. **Trust bar** (`TrustBar`) — three promises, divided, no icons.
+8. **Newsletter** (`Newsletter`) — forest card, sage panel on the left, pill email capture.
+9. **Footer** (`SiteFooter`) — wordmark + tagline, four link columns, payment strip, theme
+   toggle.
 
-```
-src/app/(admin)/admin/layout.tsx  → Auth gate, AdminShell (sidebar + topbar)
-  dashboard/                      → KPIs, revenue, recent orders
-  products/                       → Product + variant + bundle manager
-  inventory/                      → Stock levels, low-stock alerts
-  orders/                         → Order manager, status updates, manual tracking events
-  categories/
-  discounts/
-  customers/
-  settings/                       → Store settings, shipping zones, SMTP/notification config
-```
+### Product card (`ProductCard`)
 
-Admin reuses the same token system as the public site (no separate brand palette this
-time — one cohesive system), but denser layout: `text-sm` default, tighter padding,
-`rounded-xl` cards instead of `2xl`.
+The most repeated object on the site, so it is strict:
 
----
-
-## 4. Product & bundling model (drives the UI)
-
-- A product can declare `bundle_items`: other products/variants attached at a discounted
-  bundle price (e.g. novel + notebook + marker). Shown on the PDP as an "Frequently
-  paired" / "Complete the set" module with a single toggle to add the whole bundle.
-- Cart line items carry an optional `bundle_id` so bundle-sourced items are visually
-  grouped in the cart drawer.
-- Free/add-on items (e.g. "comes with a free marker") are modeled as bundle items with
-  `price_override = 0`, not a separate discount system.
-
-## 5. Reference components (to be built once in `src/components/ui/`)
-
-Button, IconButton, Input, Select, Field, Badge (Tone: success/warning/danger/info/gold),
-Card, Modal/Sheet, Toast (via `sonner`), Skeleton, EmptyState, PriceTag, StarRating,
-QuantityStepper, StatCard, TableWrap/Th/Td/Tr, ProgressTimeline (order tracking).
+- `aspect-[3/4]` image well (book covers are portrait — square crops decapitate them)
+- Availability pill top-left: **Available** / **Only N left** (clay) / **Sold out**
+- Wishlist heart top-right, filled clay when saved
+- Meta line, right-aligned, `ink-faint` — author, or the product type for stationery
+- Title (2-line clamp) and price on one row; `min-h-[68px]` so buttons align across a grid
+- Full-width outline "View details" pill, pushed to the bottom with `mt-auto`
 
 ---
 
-## 6. Key files (to be created)
+## 3. Console anatomy
+
+Same tokens, denser: `text-[13px]` base, `rounded-lg`, 4/8px rhythm, hairline tables.
+
+- **Shell** (`AdminShell`) — 264px sidebar on `surface`, nav in three labelled groups
+  (Operations / Catalogue / Configuration), active item gets a forest tint plus a 3px left
+  bar, an action-count badge on Orders, an access card and sign-out pinned at the bottom.
+  Top bar carries search, a storefront link, notifications and the signed-in identity.
+- **Primitives** (`components/admin/ui.tsx`) — `Panel`, `PanelHeader`, `PageHeader`,
+  `StatCard`, `StatusPill`, `TableWrap`/`Th`/`Td`, `EmptyState`, `TableSkeleton`.
+- **StatCard** — the lead metric on any screen is `featured`: filled forest, white numerals.
+  Everything else is a white card. Deltas are small tinted pills with a direction arrow.
+- **Charts** (`components/admin/charts.tsx`) — hand-rolled SVG, no charting library:
+  `RevenueArea`, `StatusBars`, `Gauge`. Each carries `role="img"` and a text `aria-label`
+  summary, and falls back to a written empty state rather than an empty axis frame.
+- **Order drawer** (`OrderDrawer`) — right-hand panel: customer, items with totals,
+  dispatch method and tracking, status control, and the full status history. Lets an
+  operator work an order without losing their place in the list.
+
+**One console, every role.** Nav and screens are filtered with `can(user, permission)` —
+never a separate design or route tree per role.
+
+---
+
+## 4. Placeholder imagery
+
+`public/covers/*.svg` are generated by
+[`scripts/generate-covers.mjs`](scripts/generate-covers.mjs) — flat on-brand book jackets
+and stationery cards drawn from the palette above. They exist so layout can be judged
+honestly; **replace them with real photography before launch** by updating
+`product_images.url`, which is a data change, not a code change.
+
+`next.config.ts` sets `dangerouslyAllowSVG` for these. That is safe only because they are
+first-party files we generate — never enable it for user uploads.
+
+---
+
+## 5. Accessibility rules
+
+- Status is never colour alone — every pill pairs colour with a word
+- Contrast checked in both themes; `forest` lightens in dark mode for exactly this reason
+- Focus rings on every interactive element; `cursor-pointer` on everything clickable
+- Charts expose text summaries; tables have real `<th>` scope
+- All motion respects `prefers-reduced-motion`
+- Theme toggle offers light / system / dark, with a blocking init script in
+  `layout.tsx` so there is no flash of the wrong theme
+
+---
+
+## 6. Key files
 
 | File | Role |
 |---|---|
-| `src/app/globals.css` | Token definitions, dark-mode variant |
-| `src/components/ui/*` | Shared primitives |
-| `src/lib/supabase/client.ts` / `server.ts` | Supabase browser/server clients (auth only — no direct table access, see Supabase rules) |
-| `src/lib/api/*` | Typed wrappers calling Edge Functions per resource |
-| `src/store/cart.ts` | Zustand cart store (persisted, guest-friendly) |
-| `supabase/functions/*` | One Edge Function per resource, internally routed |
-| `supabase/migrations/*` | SQL migrations (deployed via `supabase db push`) |
+| [`src/app/globals.css`](src/app/globals.css) | **All tokens.** The single source of truth |
+| [`src/components/ui/`](src/components/ui) | Shared primitives — Button, Badge, Field, Card |
+| [`src/components/site/`](src/components/site) | Storefront composition |
+| [`src/components/admin/ui.tsx`](src/components/admin/ui.tsx) | Console primitives |
+| [`src/components/admin/charts.tsx`](src/components/admin/charts.tsx) | Hand-rolled SVG charts |
+| [`scripts/generate-covers.mjs`](scripts/generate-covers.mjs) | Placeholder cover art |

@@ -5,7 +5,7 @@ window.PROGRESS = {
   project: "Livro Archive",
   tagline: "Books, stationery & everything in between — sold with soul",
   updated: "19 Aug 2026",
-  currentlyDoing: "Full vertical slice built and compiling clean: database, all 11 Edge Functions, and a working storefront + admin console. Next: bundle/variant admin UI, image uploads, the deeper GSAP/Three.js motion pass, and SEO metadata — then a human click-through once Paystack keys arrive.",
+  currentlyDoing: "Rebuilt end to end. The four real defects you surfaced (stock, order numbers, totals, email) are fixed and verified against the live database, and the whole UI has been redesigned against your Skanvi reference — storefront and console. Waiting on Paystack keys and SMTP credentials; everything else is built.",
 
   phases: [
     {
@@ -151,10 +151,57 @@ window.PROGRESS = {
       plain: "Final checks before this goes live.",
       status: "todo",
       tasks: [
-        { name: "SEO", plain: "Product pages, metadata, sitemap — findable on Google.", tech: "Per-page metadata via generateMetadata done for home/product/category. Sitemap.xml and JSON-LD product schema not yet added.", status: "doing" },
+        { name: "SEO", plain: "Product pages, metadata, sitemap — findable on Google.", tech: "Dynamic sitemap.xml, robots.txt (console/account/checkout/track excluded), canonical URLs, Open Graph + Twitter cards, and Product + BreadcrumbList JSON-LD on every product page.", status: "done" },
         { name: "Deployment notes", plain: "Clear instructions for pushing it live.", tech: "README written with local dev, db push, functions deploy, and required env vars.", status: "done" }
       ]
-    }
+    },
+    {
+      id: 12,
+      name: "Commerce model, rebuilt properly",
+      plain: "You pushed back on the plan and it exposed four things that were genuinely wrong, not just missing. This phase is the fix.",
+      status: "done",
+      starred: true,
+      tasks: [
+        { name: "Stock no longer disappears on abandoned checkouts", plain: "Before, putting in an order took the books off the shelf even if the person never paid — so an abandoned basket destroyed stock forever. Now the shop only HOLDS them for 30 minutes while payment happens, and gives them straight back if it doesn't.", tech: "available = stock_on_hand − reserved. reserve_order_stock() at payment init with a TTL, commit_order_stock() on the Paystack webhook, release_order_stock() on failure, restock_order() on cancel/return, and a release_expired_reservations() job on pg_cron every 5 minutes. Every movement is written to inventory_movements so stock is auditable. TESTED LIVE against the real database: reserve 60->58 available, commit 58 on hand, restock back to 60, and an expired hold fully recovered with the order flipped to payment_failed.", status: "done" },
+        { name: "Order numbers can no longer collide", plain: "The old order number ended in 4 random digits. At about 110 orders in a day there was a coin-flip chance two customers got the same number and one of them hit an error at checkout.", tech: "Replaced with a Postgres sequence: LIV-2026-00001. Collision-free by construction. Verified live.", status: "done" },
+        { name: "Order totals now include delivery and discounts", plain: "The old checkout literally charged the subtotal — delivery and any discount code were ignored, so customers would have been charged the wrong amount.", tech: "New _shared/pricing.ts re-prices every line from the database, applies a validated discount code, and adds the settings-driven shipping fee with a free-delivery threshold. The client's idea of a price is never trusted.", status: "done" },
+        { name: "Double-clicking checkout can't create two orders", plain: "A slow connection or an impatient second tap used to be able to place the same order twice.", tech: "Idempotency key generated per basket and stored unique on orders; a repeat returns the original order. Verified live — the same key returned LIV-2026-00001 instead of creating a second order.", status: "done" },
+        { name: "Order tracking can't be brute-forced", plain: "Someone could have guessed order numbers to read other people's orders.", tech: "Tracking requires order number AND the email/phone used at checkout, returns an identical 'not found' either way so it can't confirm which numbers are real, strips the contact fields it verified against, and is rate-limited to 10 lookups per IP per 5 minutes. Verified live — wrong contact refused, and the 11th rapid lookup returned 429.", status: "done" },
+        { name: "The order lifecycle matches how the business actually runs", plain: "Added the states you described that were missing.", tech: "Added payment_failed, ready_for_dispatch and returned; renamed packed. Only the verified Paystack webhook can set 'paid' — the admin UI refuses to, so a payment can never be faked from the back office.", status: "done" },
+        { name: "Hybrid delivery", plain: "YOUR CALL: the shop can hand an order to a courier or deliver it itself, chosen per order.", tech: "orders.delivery_method + courier_name + tracking_number + delivery_agent_id, and a delivery_agents table. Both paths are in the admin drawer from day one.", status: "done" }
+      ]
+    },
+    {
+      id: 13,
+      name: "Design, rebuilt against your reference",
+      plain: "You rejected the first two looks and sent skanvi.com plus screenshots. This is the rebuild against those.",
+      status: "done",
+      starred: true,
+      tasks: [
+        { name: "New design system", plain: "Warm cream, near-black type, one deep green, and a tight modern headline face.", tech: "v3 tokens in globals.css: canvas #FDF6EC, ink #1A1A18, forest #2F4F3E, sage #7E9E8E, Archivo display + Inter body. Full light and dark palettes. Two earlier attempts (terracotta/Fraunces, oxblood/Cormorant) were rejected and are documented in memory.md so nobody drifts back to them.", status: "done" },
+        { name: "Homepage rebuilt section by section", plain: "The hero, the 'What are you looking for?' rail, and the big picture panels now match the layouts you sent.", tech: "Hero: 44/34/22 grid, cream panel butted flush against a tall image with a shorter one inset and dropped, label pills bottom-right. CategoryRail: cutouts floating on the canvas with edge arrows that fade at either end. EditorialGrid: one tall panel plus two stacked, copy bottom-left over a colour wash. Plus a full-bleed sage favourites band, trust row, newsletter card and four-column footer.", status: "done" },
+        { name: "Full-screen menu", plain: "Tapping the nav opens a full green screen with big category links and a giant faded logo behind them.", tech: "MegaMenu on forest-deep with a 30vw ghosted wordmark bleeding off the bottom, GSAP stagger, Escape to close, scroll locked.", status: "done" },
+        { name: "Product cards and product page", plain: "Cards now show availability, a save-for-later heart and a 'View details' button, and line up evenly in a grid.", tech: "3:4 portrait crop for covers, availability pill, wishlist heart (local, guest-friendly), reserved title height so buttons align. PDP rebuilt with a thumbnail gallery, option pills, a checkbox-style bundle upsell showing the saving, delivery/returns strip and accordions.", status: "done" },
+        { name: "Real cover art instead of stock photos", plain: "The placeholder images were random landscape photos, which made a bookshop look like a travel blog. Now every product has a proper generated jacket.", tech: "scripts/generate-covers.mjs writes 44 flat on-brand SVG jackets to public/covers, applied by migration. Replace with real photography by changing product_images.url — no code change.", status: "done" },
+        { name: "Light and dark mode with a toggle", plain: "A three-way toggle in the footer: light, system, dark.", tech: "data-theme on <html> + localStorage, with a blocking init script so there's no flash of the wrong theme.", status: "done" },
+        { name: "Console rebuilt from bland to operational", plain: "You called the admin bland. It's now built around the dashboard screenshots you sent.", tech: "Grouped sidebar with active markers and an action-count badge; a filled-green lead KPI card; hand-rolled SVG revenue area chart, status bars and a delivery gauge (no charting library); and an Orders screen with filter chips, a dense table, one-tap 'next step' buttons and a right-hand detail drawer showing customer, items, dispatch, status and full history.", status: "done" },
+        { name: "New console screens", plain: "Inventory, customers and promotions now exist as real working screens.", tech: "Inventory (on hand / held / available per SKU and variant, quick adjusters, movement history), Customers (rolled up per email, guests included), Promotions (bundle builder and discount codes), plus rebuilt Products, Categories, Settings and Roles.", status: "done" }
+      ]
+    },
+    {
+      id: 14,
+      name: "Notifications that can't be lost",
+      plain: "Emails are now a queue, not a hopeful side effect.",
+      status: "doing",
+      starred: true,
+      tasks: [
+        { name: "Every status change records an event", plain: "When an order changes, that fact is written down permanently — so an email can be late, but never silently lost.", tech: "notification_events table written in the same breath as the status change, unique on (event_type, order_id) so a retry can never double-send. Verified live: order_created and payment_failed rows appeared automatically.", status: "done" },
+        { name: "A dispatcher with retries and backoff", plain: "If sending fails, it tries again later instead of giving up.", tech: "/notifications/dispatch drains the queue with exponential backoff (1, 2, 4, 8 minutes) up to a settings-driven max, then marks the event dead so it's visible rather than forgotten. Verified live: with no transport configured, all three queued emails were marked failed with the real error and a retry time — none lost.", status: "done" },
+        { name: "Branded order emails", plain: "Proper emails for every stage, in the shop's own look.", tech: "Nine templates (order created through delivered/refunded) rendered as responsive HTML + plain text with the storefront palette and a tracking button.", status: "done" },
+        { name: "The email service itself", plain: "A small separate service that actually puts the mail on SMTP.", tech: "YOUR CALL: a standalone Node service in email-service/ using SMTP credentials you own — Supabase's own mail is for sign-up only and rate-limited, and the rules rule out SendGrid/Mailchimp/Resend. Built and tested locally (health, auth rejection, bad body, and a 5xx on SMTP failure so the queue retries). NOT LIVE — needs deploying and your SMTP credentials.", status: "doing" },
+        { name: "Automatic queue draining", plain: "The queue should empty itself every couple of minutes.", tech: "Needs one script run in the Supabase SQL editor (supabase/scripts/schedule-notifications.sql) because it requires the service role key, which must never be committed. Until then the queue still records everything and can be drained manually from the console.", status: "todo" }
+      ]
+    },
   ],
 
   log: [
@@ -180,9 +227,11 @@ window.PROGRESS = {
   ],
 
   blockers: [
-    "Paystack API keys not yet provided — /payments/initialize and /payments/webhook are deployed and correctly return a 503 (\"Paystack is not configured yet\") until PAYSTACK_SECRET_KEY is set via `supabase secrets set`. Checkout can be built and tested up to the payment step, but real payments won't process until the keys arrive.",
-    "No live preview will be run proactively per instruction — everything gets built end-to-end first, then handed over for you to test.",
-    "The products manager doesn't yet support variants, bundle building, or image upload — those need Supabase Storage wiring before a real catalog can be entered through the admin UI (products/categories can be created today, but with a single price/stock only)."
+    "PAYSTACK KEYS — still not supplied. Everything up to the payment step works and is tested; /payments returns a clear 503 until PAYSTACK_SECRET_KEY is set with `supabase secrets set`. Checkout currently falls through to the confirmation screen so the flow can still be reviewed.",
+    "SMTP CREDENTIALS — the email service is built and tested but not deployed. Deploy email-service/ anywhere running Node 20+, then set EMAIL_SERVICE_URL and EMAIL_SERVICE_TOKEN as Supabase secrets. Until then order emails queue up and retry rather than sending; nothing is lost.",
+    "ONE SQL SCRIPT TO RUN — supabase/scripts/schedule-notifications.sql, pasted into the Supabase SQL editor, switches on automatic email dispatch every 2 minutes. It isn't a migration because it needs the service role key, which must never be committed to the repo.",
+    "Email verification on sign-up needs enabling in the Supabase dashboard (Authentication -> Providers -> Email). That's a dashboard setting, not code.",
+    "NOT YET CLICKED THROUGH BY A HUMAN. I verified the storefront and console myself in a headless browser and tested the commerce logic directly against the live database, but nobody has actually shopped the site end to end. That's yours to do."
   ],
 
   decisions: [

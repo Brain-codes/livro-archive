@@ -30,7 +30,7 @@ export default async function CheckoutSuccessPage({
           </Link>
         )}
         <Link href="/shop">
-          <Button variant="secondary" size="lg">
+          <Button variant="outline" size="lg">
             Keep browsing
           </Button>
         </Link>
