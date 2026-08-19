@@ -5,7 +5,7 @@ window.PROGRESS = {
   project: "Livro Archive",
   tagline: "Books, stationery & everything in between — sold with soul",
   updated: "19 Aug 2026",
-  currentlyDoing: "Rebuilt end to end. The four real defects you surfaced (stock, order numbers, totals, email) are fixed and verified against the live database, and the whole UI has been redesigned against your Skanvi reference — storefront and console. Waiting on Paystack keys and SMTP credentials; everything else is built.",
+  currentlyDoing: "Your real inventory is live — all 20 titles from the sheet, priced, with cover art, visible in the shop. Second Super Admin created. Still waiting on Paystack keys and SMTP credentials; and the stock counts are placeholders you need to set.",
 
   phases: [
     {
@@ -202,6 +202,22 @@ window.PROGRESS = {
         { name: "Automatic queue draining", plain: "The queue should empty itself every couple of minutes.", tech: "Needs one script run in the Supabase SQL editor (supabase/scripts/schedule-notifications.sql) because it requires the service role key, which must never be committed. Until then the queue still records everything and can be drained manually from the console.", status: "todo" }
       ]
     },
+    {
+      id: 15,
+      name: "Your real stock goes in",
+      plain: "The 20 titles from your sheet are now the actual shop.",
+      status: "doing",
+      starred: true,
+      tasks: [
+        { name: "Second Super Admin created", plain: "emmany4567@gmail.com can sign in and manage everything.", tech: "Created via the auth-profile signup function, then a migration confirmed the email and granted the Super Admin role. Verified by logging in over the real Auth API — comes back isSuperAdmin: true with permissions ['*'].", status: "done" },
+        { name: "All 20 books loaded", plain: "Every title from the sheet, with its retail price and a cover.", tech: "Migration 20260819000800. All 20 retail prices checked line by line against your sheet — every one matches. Confirmed live: the shop now returns 20 books plus 15 stationery items.", status: "done" },
+        { name: "Wholesale stored properly", plain: "Your cost price is saved against each book so you can see your margin — but customers never see it.", tech: "MY CALL: added a cost_price column rather than putting wholesale in compare_at_price. A struck-through wholesale price would tell customers they could have bought at cost. Total across the 20 titles: cost 70,150, retail 101,500, margin 31,350 (31%). Making It Big is your thinnest at 13%.", status: "done" },
+        { name: "Placeholder books hidden", plain: "The fake books I'd seeded for testing are now hidden so the shop only shows your real stock. They're hidden, not deleted — say the word and they come back.", tech: "29 seeded titles set to status='draft'. Restore with a single UPDATE documented in the migration. Placeholder stationery stays active since you do sell stationery and the bundles use it.", status: "done" },
+        { name: "Empty categories no longer shown", plain: "Fiction, Textbooks and Children's Books had nothing in them once the fake books were hidden, so they no longer appear as empty tiles.", tech: "Category rails/strips filter to categories with active products; homepage editorial panels are derived from stocked categories, and the grid degrades gracefully at one or two panels instead of leaving a hole.", status: "done" },
+        { name: "SET YOUR REAL STOCK COUNTS", plain: "Your sheet had no quantities, so every title is sitting at a placeholder of 10. You need to set the real numbers before selling.", tech: "Console -> Inventory. Quick +1/+10/-1 adjusters per SKU, and every change is written to the movement history.", status: "todo" },
+        { name: "Check the titles I corrected", plain: "A few entries in the sheet had typos. I corrected them rather than loading them wrong, but you should confirm.", tech: "Buitl to last -> Built to Last; Austin Cleon -> Austin Kleon; Steven R Covey -> Stephen R. Covey; Who moved my cheese teens -> Who Moved My Cheese? for Teens; 7 strategies for wealth -> 7 Strategies for Wealth & Happiness. All editable in the console.", status: "todo" }
+      ]
+    },
   ],
 
   log: [
@@ -231,6 +247,7 @@ window.PROGRESS = {
     "SMTP CREDENTIALS — the email service is built and tested but not deployed. Deploy email-service/ anywhere running Node 20+, then set EMAIL_SERVICE_URL and EMAIL_SERVICE_TOKEN as Supabase secrets. Until then order emails queue up and retry rather than sending; nothing is lost.",
     "ONE SQL SCRIPT TO RUN — supabase/scripts/schedule-notifications.sql, pasted into the Supabase SQL editor, switches on automatic email dispatch every 2 minutes. It isn't a migration because it needs the service role key, which must never be committed to the repo.",
     "Email verification on sign-up needs enabling in the Supabase dashboard (Authentication -> Providers -> Email). That's a dashboard setting, not code.",
+    "STOCK COUNTS ARE PLACEHOLDERS — every one of your 20 titles is set to 10 because the sheet had no quantities. Set the real numbers in Console -> Inventory before selling anything.",
     "NOT YET CLICKED THROUGH BY A HUMAN. I verified the storefront and console myself in a headless browser and tested the commerce logic directly against the live database, but nobody has actually shopped the site end to end. That's yours to do."
   ],
 

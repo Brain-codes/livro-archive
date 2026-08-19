@@ -19,15 +19,32 @@ Persistent notes across sessions. Read this first when resuming work.
 - **Cart**: Zustand, persisted, guest-first.
 
 ## Admin access
-- Super Admin account (full `*` permissions): `adenugaadewumi01@gmail.com` /
-  `Admin@1234`. Email pre-confirmed via migration so it can sign in immediately at
-  `/auth/sign-in`, then reach `/admin`.
+Two Super Admin accounts (full `*` permissions), both email-pre-confirmed via
+migration so they can sign in immediately at `/auth/sign-in` and reach `/admin`:
+- `adenugaadewumi01@gmail.com` / `Admin@1234`
+- `emmany4567@gmail.com` / `Admin@1234`
 
-## Dummy catalog data
-- 44 products seeded via `supabase/migrations/20260819000300_seed_catalog.sql`
-  (books across all 7 categories + stationery), 3 bundles, a few variant-bearing
-  products (paperback/hardcover, journal colours). Cover art is now generated SVG —
-  see "Placeholder imagery" below.
+## Pricing model — wholesale vs retail
+The supplied inventory sheet carries a wholesale AND a retail figure per title.
+- `products.base_price` = **retail** (what the customer pays)
+- `products.cost_price` = **wholesale** (cost of goods, never shown to customers)
+Wholesale deliberately does NOT go in `compare_at_price`: a struck-through wholesale
+price would tell customers they could once have bought at cost. `compare_at_price`
+stays reserved for genuine former retail prices.
+
+## Catalogue state
+- **Real opening stock**: 20 business/self-help titles from the user's sheet, loaded by
+  `20260819000800_real_catalogue.sql` into Non-Fiction, all active and featured-flagged
+  where appropriate. `stock_quantity` is a PLACEHOLDER of 10 per title — the sheet had
+  no quantities. Real counts must be set in the console under Inventory.
+- **Placeholder books are drafted, not deleted.** The 29 seeded fiction/textbook/
+  children's titles were set to `status = 'draft'` when real stock arrived, so the shop
+  shows only real inventory. Restore with a single UPDATE (the migration documents it).
+- **Placeholder stationery stays active** (15 items) — the shop genuinely sells
+  stationery and the bundles reference it.
+- Category strips/rails filter to categories that have active products, and the
+  homepage editorial panels are derived from stocked categories, so drafting things
+  out never leaves empty tiles or a hole in the layout.
 
 ## Design system — v3, Skanvi-referenced (two rejected attempts before this)
 - v1 (terracotta/gold + Fraunces) and v2 (oxblood + Cormorant Garamond) were both
