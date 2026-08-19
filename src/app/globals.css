@@ -1,30 +1,32 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
+/* Editorial literary palette: near-black ink on warm paper, one confident oxblood
+   accent — deliberately not the earlier terracotta/gold pairing. */
 :root {
-  --color-canvas: #fbf7f0;
+  --color-canvas: #f7f5f0;
   --color-surface: #ffffff;
-  --color-surface-muted: #f2ece1;
-  --color-ink: #211a14;
-  --color-ink-muted: #6b5f52;
-  --color-border: #e4dbc9;
-  --color-primary: #a8492a;
-  --color-primary-ink: #7a331b;
-  --color-accent: #3f6e5b;
-  --color-gold: #b98a2e;
+  --color-surface-muted: #eeeae1;
+  --color-ink: #16130f;
+  --color-ink-muted: #6e675c;
+  --color-border: #e1dbcd;
+  --color-primary: #7a2230;
+  --color-primary-ink: #5c1a24;
+  --color-accent: #2f5d50;
+  --color-gold: #a67c3d;
   --color-danger: #b3432e;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-canvas: #0f0d0b;
-    --color-surface: #1a1613;
-    --color-surface-muted: #221d19;
-    --color-ink: #f3ece1;
-    --color-ink-muted: #b3a797;
-    --color-border: #332c25;
-    --color-primary: #d97c55;
-    --color-primary-ink: #f0a57f;
+    --color-canvas: #0b0a09;
+    --color-surface: #17130f;
+    --color-surface-muted: #201a15;
+    --color-ink: #f5f1e9;
+    --color-ink-muted: #a89d8c;
+    --color-border: #2c2419;
+    --color-primary: #e08a7d;
+    --color-primary-ink: #f2b2a8;
     --color-accent: #6fa98c;
     --color-gold: #d9ac5c;
     --color-danger: #e2745a;
@@ -32,14 +34,14 @@
 }
 
 :root[data-theme="dark"] {
-  --color-canvas: #0f0d0b;
-  --color-surface: #1a1613;
-  --color-surface-muted: #221d19;
-  --color-ink: #f3ece1;
-  --color-ink-muted: #b3a797;
-  --color-border: #332c25;
-  --color-primary: #d97c55;
-  --color-primary-ink: #f0a57f;
+  --color-canvas: #0b0a09;
+  --color-surface: #17130f;
+  --color-surface-muted: #201a15;
+  --color-ink: #f5f1e9;
+  --color-ink-muted: #a89d8c;
+  --color-border: #2c2419;
+  --color-primary: #e08a7d;
+  --color-primary-ink: #f2b2a8;
   --color-accent: #6fa98c;
   --color-gold: #d9ac5c;
   --color-danger: #e2745a;
@@ -57,7 +59,7 @@
   --color-accent: var(--color-accent);
   --color-gold: var(--color-gold);
   --color-danger: var(--color-danger);
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -76,6 +78,8 @@ body {
 
 h1, h2, h3, h4, .font-display {
   font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .tabular-nums {

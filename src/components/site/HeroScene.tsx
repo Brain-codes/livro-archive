@@ -16,15 +16,15 @@ function OpenBook() {
       <group ref={group as never}>
         <mesh position={[-0.55, 0, 0]} rotation={[0.05, 0.35, 0]}>
           <boxGeometry args={[1, 1.35, 0.06]} />
-          <meshStandardMaterial color="#f3ece1" roughness={0.6} />
+          <meshStandardMaterial color="#f5f1e9" roughness={0.6} />
         </mesh>
         <mesh position={[0.55, 0, 0]} rotation={[0.05, -0.35, 0]}>
           <boxGeometry args={[1, 1.35, 0.06]} />
-          <meshStandardMaterial color="#f3ece1" roughness={0.6} />
+          <meshStandardMaterial color="#f5f1e9" roughness={0.6} />
         </mesh>
         <mesh position={[0, -0.05, 0.04]}>
           <boxGeometry args={[2.05, 0.08, 0.14]} />
-          <meshStandardMaterial color="#a8492a" roughness={0.5} />
+          <meshStandardMaterial color="#7a2230" roughness={0.5} />
         </mesh>
       </group>
     </Float>

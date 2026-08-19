@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/site/ThemeToggle";
 
 export function SiteFooter() {
   return (
@@ -31,8 +32,11 @@ export function SiteFooter() {
           <p className="mt-3 text-sm text-ink-muted">No account needed to buy — ever.</p>
         </div>
       </div>
-      <div className="border-t border-border px-5 py-6 text-center text-xs text-ink-muted">
-        © {new Date().getFullYear()} Livro Archive. All rights reserved.
+      <div className="border-t border-border px-5 py-6 flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
+        <p className="text-xs text-ink-muted">
+          © {new Date().getFullYear()} Livro Archive. All rights reserved.
+        </p>
+        <ThemeToggle />
       </div>
     </footer>
   );

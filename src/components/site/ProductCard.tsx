@@ -37,7 +37,7 @@ export function ProductCard({ product }: { product: Product }) {
         {product.author && (
           <p className="text-xs text-ink-muted">{product.author}</p>
         )}
-        <h3 className="font-display text-base leading-snug text-ink line-clamp-2">
+        <h3 className="font-display text-lg leading-snug text-ink line-clamp-2">
           {product.title}
         </h3>
         <PriceTag

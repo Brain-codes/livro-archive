@@ -9,39 +9,42 @@ and dark mode.
 
 ## 1. Design tokens
 
-### Brand palette
+### Brand palette (v2 — revised after design review)
 
-A warm, literary palette — inspired by aged paper, ink, and terracotta book-spine reds —
-kept desaturated enough to be calm, not loud.
+An editorial, near-monochrome palette (warm paper + near-black ink, like a printed
+book) with one confident accent — oxblood/burgundy — used deliberately rather than
+scattered. Replaced the original terracotta/gold pairing, which read too "craft shop."
 
 | Token | Light value | Dark value | Use |
 |---|---|---|---|
-| `--color-canvas` | `#FBF7F0` | `#0F0D0B` | Page background — warm paper / warm near-black |
-| `--color-surface` | `#FFFFFF` | `#1A1613` | Cards, raised panels |
-| `--color-surface-muted` | `#F2ECE1` | `#221D19` | Secondary panels, table stripes |
-| `--color-ink` | `#211A14` | `#F3ECE1` | Primary text |
-| `--color-ink-muted` | `#6B5F52` | `#B3A797` | Secondary text |
-| `--color-border` | `#E4DBC9` | `#332C25` | Hairlines |
-| `--color-primary` | `#A8492A` | `#D97C55` | Terracotta — primary actions, links |
-| `--color-primary-ink` | `#7A331B` | `#F0A57F` | Primary text-on-light / accents |
-| `--color-accent` | `#3F6E5B` | `#6FA98C` | Secondary accent — forest green (in-stock, success) |
-| `--color-gold` | `#B98A2E` | `#D9AC5C` | Highlights, ratings, bundle badges |
+| `--color-canvas` | `#F7F5F0` | `#0B0A09` | Page background — warm paper / warm near-black |
+| `--color-surface` | `#FFFFFF` | `#17130F` | Cards, raised panels |
+| `--color-surface-muted` | `#EEEAE1` | `#201A15` | Secondary panels, table stripes |
+| `--color-ink` | `#16130F` | `#F5F1E9` | Primary text |
+| `--color-ink-muted` | `#6E675C` | `#A89D8C` | Secondary text |
+| `--color-border` | `#E1DBCD` | `#2C2419` | Hairlines |
+| `--color-primary` | `#7A2230` | `#E08A7D` | Oxblood — primary actions, links |
+| `--color-primary-ink` | `#5C1A24` | `#F2B2A8` | Primary text-on-light / accents |
+| `--color-accent` | `#2F5D50` | `#6FA98C` | Secondary accent — deep green (in-stock, success) |
+| `--color-gold` | `#A67C3D` | `#D9AC5C` | Highlights, ratings, bundle badges |
 | `--color-danger` | `#B3432E` | `#E2745A` | Errors, destructive actions |
 
 These live as CSS variables in `globals.css` under `@theme`, consumed via Tailwind v4
-utilities (`bg-canvas`, `text-ink`, etc.) — never raw hex in components.
+utilities (`bg-canvas`, `text-ink`, etc.) — never raw hex in components. Because
+everything is token-driven, changing the palette again only ever means editing
+`globals.css`; nothing else should hardcode a color.
 
-### Typography
+### Typography (v2)
 
 | Role | Family | Notes |
 |---|---|---|
-| Display / headings | **Fraunces** (variable, serif) | Editorial, literary voice — the "book" feel |
+| Display / headings | **Cormorant Garamond** (serif, italic available) | Editorial, literary, higher-contrast strokes than the earlier Fraunces — the "book jacket" feel. Rendered at `font-weight: 600` by default (the thin 400 weight reads too delicate below hero size). |
 | Body / UI | **Inter** | Neutral, highly legible at small sizes |
 | Numeric / price | Inter, `tabular-nums` | Prices never jitter |
 
-Scale: `text-5xl/6xl` hero, `text-3xl` section headers, `text-lg` card titles, `text-sm`
-body, `text-xs` meta/labels. Headings use Fraunces at `font-medium`–`font-semibold`,
-never fully bold — keeps the literary tone soft.
+Scale: `text-5xl/6xl` hero, `text-3xl` section headers, `text-lg` card titles (bumped
+from `text-base` — Cormorant needs more size to stay legible at card scale), `text-sm`
+body, `text-xs` meta/labels.
 
 ### Geometry
 

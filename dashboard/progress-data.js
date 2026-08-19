@@ -5,7 +5,7 @@ window.PROGRESS = {
   project: "Livro Archive",
   tagline: "Books, stationery & everything in between — sold with soul",
   updated: "19 Aug 2026",
-  currentlyDoing: "Backend is live: full database schema pushed and 9 Edge Functions deployed and confirmed responding against the real project. Building the storefront UI next (design tokens, layout, cart, product pages).",
+  currentlyDoing: "Full vertical slice built and compiling clean: database, all 11 Edge Functions, and a working storefront + admin console. Next: bundle/variant admin UI, image uploads, the deeper GSAP/Three.js motion pass, and SEO metadata — then a human click-through once Paystack keys arrive.",
 
   phases: [
     {
@@ -17,9 +17,9 @@ window.PROGRESS = {
         { name: "Project folders and settings", plain: "Create the app skeleton so we can start adding screens.", tech: "Next.js 15 App Router + TypeScript + Tailwind v4, src/ dir, @/* alias.", status: "done" },
         { name: "Install the stack", plain: "Pull in every library the build needs up front.", tech: "@supabase/supabase-js, @supabase/ssr, gsap, three, @react-three/fiber, @react-three/drei, framer-motion, zustand, react-hook-form, zod, lucide-react, sonner, date-fns.", status: "done" },
         { name: "Design system doc", plain: "Lock in the colours, type and motion rules before building screens.", tech: "design.md — warm literary palette (terracotta/gold/paper), Fraunces + Inter, light/dark tokens.", status: "done" },
-        { name: "Flow & memory docs", plain: "Write down how the store is supposed to work and what's been decided, so nothing gets rebuilt by accident.", tech: "flow.md (shopper/order lifecycle), memory.md (stack decisions, credentials, rules).", status: "done" },
+        { name: "Flow & memory docs", plain: "Write down how the store is supposed to work and what's been decided, so nothing gets rebuilt by accident.", tech: "flow.md (shopper/order lifecycle), memory.md (stack decisions, credentials, rules, mid-build corrections).", status: "done" },
         { name: "Build dashboard", plain: "This page — a running log you can check any time.", tech: "dashboard/index.html + progress-data.js, same engine as The Turf Ball's dashboard.", status: "done" },
-        { name: "Supabase project wired up", plain: "Point the app at the real database.", tech: "supabase init, .env.local populated with project URL + anon key.", status: "done" }
+        { name: "Supabase project wired up", plain: "Point the app at the real database.", tech: "supabase init, .env.local populated with project URL + anon key, project linked via CLI.", status: "done" }
       ]
     },
     {
@@ -30,7 +30,8 @@ window.PROGRESS = {
       tasks: [
         { name: "Core tables", plain: "Products, variants, categories, bundles, carts, orders, order items, tracking events.", tech: "Migration pushed live: profiles, addresses, categories, products (full-text search + trigram index), product_variants, product_images, bundles, bundle_items, carts, cart_items, orders, order_items, order_status_events, discounts.", status: "done" },
         { name: "Row Level Security", plain: "Lock every table down so nothing is readable/writable except through Edge Functions.", tech: "RLS enabled deny-all on every table (zero policies); service_role explicitly granted table access via a follow-up migration after hitting a permission-denied error on first deploy.", status: "done" },
-        { name: "Seed data", plain: "A few starter categories so the shop isn't empty.", tech: "Seeded categories: Fiction, Non-Fiction, Children's, Textbooks, Notebooks & Journals, Writing & Drawing, Classroom Supplies — confirmed live via curl.", status: "done" }
+        { name: "Seed data", plain: "A few starter categories so the shop isn't empty.", tech: "Seeded categories: Fiction, Non-Fiction, Children's, Textbooks, Notebooks & Journals, Writing & Drawing, Classroom Supplies — confirmed live via curl.", status: "done" },
+        { name: "Dynamic roles & settings", plain: "So nobody ever has to edit code or the database to add a staff role or change a store setting.", tech: "YOUR CALL, MID-BUILD: admin_roles table (name, permissions[], is_super_admin) + profiles.admin_role_id, and a generic settings key/value table (category, label, is_public) seeded with site name, currency, shipping fee, thresholds, social links, default theme.", status: "done" }
       ]
     },
     {
@@ -39,43 +40,44 @@ window.PROGRESS = {
       plain: "The shared plumbing every Edge Function reuses.",
       status: "done",
       tasks: [
-        { name: "Shared backend utilities", plain: "Common code so every part of the backend behaves the same way.", tech: "supabase/functions/_shared/: cors.ts, response.ts, auth.ts (JWT -> profile role resolution), db.ts (service-role client).", status: "done" },
-        { name: "Standard response envelope", plain: "Every request gets an answer in exactly the same shape.", tech: "{ success, message, data, meta, errors } via _shared/response.ts, used by all 9 functions.", status: "done" }
+        { name: "Shared backend utilities", plain: "Common code so every part of the backend behaves the same way.", tech: "supabase/functions/_shared/: cors.ts, response.ts, auth.ts (JWT -> profile + admin_role permission resolution, can()/requireRole() helpers), db.ts (service-role client).", status: "done" },
+        { name: "Standard response envelope", plain: "Every request gets an answer in exactly the same shape.", tech: "{ success, message, data, meta, errors } via _shared/response.ts, used by all 11 functions.", status: "done" },
+        { name: "Permission-gated admin operations", plain: "Every admin write checks a specific permission, not just \"is this an admin\".", tech: "can(caller, 'products.manage' | 'orders.manage' | 'stats.view' | 'settings.manage'); role creation itself is locked to isSuperAdmin only.", status: "done" }
       ]
     },
     {
       id: 3,
       name: "Accounts & login",
       plain: "Optional accounts — never required to buy something.",
-      status: "doing",
+      status: "done",
       tasks: [
-        { name: "Sign up / sign in / sign out", plain: "The everyday account actions.", tech: "Supabase Auth SDK directly for simple flows (login/logout/reset) per Supabase rule §11 — frontend screens not yet built.", status: "todo" },
-        { name: "Profile creation on signup", plain: "Create the matching profile row when someone signs up.", tech: "auth-profile Edge Function deployed: creates auth.users + profiles atomically, rolls back the auth user if the profile insert fails.", status: "done" },
-        { name: "Email verification", plain: "Confirm the email address is real.", tech: "Native Supabase confirm-email, no third-party ESP — needs enabling in the Supabase Auth dashboard.", status: "todo" }
+        { name: "Sign up / sign in / sign out", plain: "The everyday account actions.", tech: "Supabase Auth SDK directly for simple flows, /auth/sign-in and /auth/sign-up screens built, useSession() hook resolves the caller + permissions client-side.", status: "done" },
+        { name: "Profile creation on signup", plain: "Create the matching profile row when someone signs up.", tech: "auth-profile Edge Function: creates auth.users + profiles atomically, rolls back the auth user if the profile insert fails.", status: "done" },
+        { name: "Email verification", plain: "Confirm the email address is real.", tech: "Native Supabase confirm-email, no third-party ESP — still needs enabling in the Supabase Auth dashboard (a dashboard setting, not code).", status: "todo" }
       ]
     },
     {
       id: 4,
       name: "Catalog",
       plain: "Everything about browsing and viewing products.",
-      status: "doing",
+      status: "done",
       tasks: [
-        { name: "Product & category Edge Functions", plain: "List, search, filter and view single products/categories.", tech: "/product and /category deployed and confirmed live — full CRUD, admin-gated writes, public reads.", status: "done" },
-        { name: "Shop grid", plain: "The main browsing screen with filters and sort.", tech: "Server-rendered grid, ISR per category, client-side filter refinement.", status: "todo" },
-        { name: "Product detail page", plain: "Full product view with gallery, price, stock and the bundle upsell.", tech: "PDP with bundle_items module — add whole bundle in one tap.", status: "todo" },
-        { name: "Search", plain: "Find a product by name/author/ISBN.", tech: "Postgres full-text search exposed via /product?q=.", status: "todo" }
+        { name: "Product & category Edge Functions", plain: "List, search, filter and view single products/categories.", tech: "/product and /category deployed and confirmed live — full CRUD, permission-gated writes, public reads, full-text search via search_vector.", status: "done" },
+        { name: "Shop grid", plain: "The main browsing screen with filters and sort.", tech: "/shop (all products) and /shop/[category], server-rendered with ISR (60s revalidate), GSAP ScrollTrigger stagger-in via ShopGrid.", status: "done" },
+        { name: "Product detail page", plain: "Full product view with gallery, price, stock and the bundle upsell.", tech: "/product/[slug] — gallery, variant picker, bundle module reading bundle_items, add-to-cart and add-whole-bundle actions.", status: "done" },
+        { name: "Search", plain: "Find a product by name/author/ISBN.", tech: "Postgres full-text search exposed via /product?q= — backend ready, search box in the header not yet wired to it.", status: "doing" }
       ]
     },
     {
       id: 5,
       name: "Cart",
       plain: "Adding things to a basket, guest-friendly.",
-      status: "todo",
+      status: "done",
       starred: true,
       tasks: [
-        { name: "Cart store", plain: "Add, remove, adjust quantity — instantly, no login.", tech: "Zustand store persisted to localStorage; bundle-aware line items.", status: "todo" },
-        { name: "Cart drawer + full cart page", plain: "See what's in the basket and edit it.", tech: "Slide-in drawer with flight-to-cart animation, full /cart page for review.", status: "todo" },
-        { name: "Server cart sync", plain: "Turn the local cart into a real row once checkout starts.", tech: "/cart Edge Function deployed — persists a carts + cart_items snapshot tied to a session token or signed-in user; frontend wiring pending.", status: "done" }
+        { name: "Cart store", plain: "Add, remove, adjust quantity — instantly, no login.", tech: "Zustand store (src/store/cart.ts) persisted to localStorage; bundle-aware line items grouped by bundleId.", status: "done" },
+        { name: "Cart drawer + full cart page", plain: "See what's in the basket and edit it.", tech: "Slide-in CartDrawer (opens automatically on add) plus a full /cart review page.", status: "done" },
+        { name: "Server cart sync", plain: "Turn the local cart into a real row once checkout starts.", tech: "/cart Edge Function deployed — persists a carts + cart_items snapshot tied to a session token or signed-in user. Not yet called from the frontend (checkout currently goes straight from the Zustand store to /orders); wiring this up is what would let an abandoned cart be recovered later.", status: "doing" }
       ]
     },
     {
@@ -85,23 +87,23 @@ window.PROGRESS = {
       status: "doing",
       starred: true,
       tasks: [
-        { name: "Guest + signed-in checkout", plain: "Email, shipping address, phone — account optional.", tech: "/checkout with react-hook-form + zod validation, prefill from saved address if signed in — screen not yet built.", status: "todo" },
-        { name: "Order creation (checkout backend)", plain: "Turn a cart into a real order, priced and stock-checked server-side.", tech: "/orders POST deployed: re-prices every line from the DB (never trusts client prices), checks stock, decrements it, writes order + order_items + a pending_payment status event.", status: "done" },
-        { name: "Paystack integration", plain: "Pay by card, bank transfer or USSD.", tech: "/payments/initialize deployed. PAYSTACK_SECRET_KEY not yet supplied — returns a clear 503 until it's set via `supabase secrets set`.", status: "doing" },
+        { name: "Guest + signed-in checkout", plain: "Email, shipping address, phone — account optional.", tech: "/checkout built with react-hook-form + zod validation, order summary sidebar, submits straight to /orders then /payments/initialize.", status: "done" },
+        { name: "Order creation (checkout backend)", plain: "Turn a cart into a real order, priced and stock-checked server-side.", tech: "/orders POST: re-prices every line from the DB (never trusts client prices), checks stock, decrements it, writes order + order_items + a pending_payment status event.", status: "done" },
+        { name: "Paystack integration", plain: "Pay by card, bank transfer or USSD.", tech: "/payments/initialize deployed. PAYSTACK_SECRET_KEY not yet supplied — returns a clear 503 until it's set via `supabase secrets set`; checkout gracefully falls back to the confirmation screen in that case so the flow can still be reviewed end to end.", status: "doing" },
         { name: "Webhook confirms payment", plain: "Only trust the payment once Paystack itself confirms it.", tech: "/payments/webhook deployed: verifies HMAC-SHA512 signature, flips order pending_payment -> paid. Untestable until Paystack keys arrive.", status: "doing" },
-        { name: "Order confirmation page", plain: "Instant receipt with the order ID, no login needed.", tech: "/checkout/success reads order by id + short-lived token, doubles as the emailed receipt content — screen not yet built.", status: "todo" }
+        { name: "Order confirmation page", plain: "Instant receipt with the order ID, no login needed.", tech: "/checkout/success shows the order number and a direct link into tracking.", status: "done" }
       ]
     },
     {
       id: 7,
       name: "Orders & tracking",
       plain: "Letting anyone follow their order from placed to delivered.",
-      status: "doing",
+      status: "done",
       starred: true,
       tasks: [
         { name: "Order lookup", plain: "Find your order with just the order ID and email/phone — no account needed.", tech: "/tracking Edge Function deployed: matches order_number + contact email/phone, strips contact fields from the public response.", status: "done" },
-        { name: "Tracking timeline UI", plain: "A clear visual timeline: placed, confirmed, packed, shipped, delivered.", tech: "ProgressTimeline component reading order_status_events.", status: "todo" },
-        { name: "Account order history", plain: "Signed-in customers see every order automatically.", tech: "/orders/mine deployed — lists orders by profile email match, not just user_id. Screen not yet built.", status: "doing" }
+        { name: "Tracking timeline UI", plain: "A clear visual timeline: placed, confirmed, packed, shipped, delivered.", tech: "/track (lookup form) and /track/[orderId] (timeline + items), OrderTimeline component reading order_status_events.", status: "done" },
+        { name: "Account order history", plain: "Signed-in customers see every order automatically.", tech: "/orders/mine deployed and wired into /account — lists orders by profile email match, not just user_id.", status: "done" }
       ]
     },
     {
@@ -111,11 +113,14 @@ window.PROGRESS = {
       status: "doing",
       starred: true,
       tasks: [
-        { name: "Admin shell + auth gate", plain: "A locked-down dashboard for staff only.", tech: "(admin) route group, role check via profiles.role, AdminShell sidebar + topbar — not yet built.", status: "todo" },
-        { name: "Product & bundle manager", plain: "Add/edit products, variants, images, and build bundles.", tech: "Backend ready: full CRUD via /product (admin-scoped operations). Image upload to Supabase Storage and the manager UI not yet built.", status: "doing" },
-        { name: "Inventory view", plain: "See and adjust stock across every SKU.", tech: "Bulk stock editor, low-stock filter — not yet built.", status: "todo" },
-        { name: "Orders manager", plain: "See every order, update its status, add tracking notes.", tech: "Backend ready: /orders admin list/detail/PATCH deployed, fires /send-email on every status change. Manager UI not yet built.", status: "doing" },
-        { name: "Dashboard KPIs", plain: "Revenue, order counts, best sellers at a glance.", tech: "/admin-stats deployed (revenue, order count, low-stock count, stuck-order flags, recent orders). Hand-rolled SVG charts + screen not yet built.", status: "doing" }
+        { name: "Admin shell + auth gate", plain: "A locked-down dashboard for staff only, one design for every role.", tech: "(admin) route group, AdminShell reads useSession()+can() to show/hide nav items per permission — not a separate UI per role, just conditional rendering.", status: "done" },
+        { name: "Product & bundle manager", plain: "Add/edit products, variants, images, and build bundles.", tech: "/admin/products: list + create form live. Variant/image/bundle editing and Supabase Storage upload not yet built.", status: "doing" },
+        { name: "Category manager", plain: "Add and view categories.", tech: "/admin/categories: list + create form, live.", status: "done" },
+        { name: "Inventory view", plain: "See and adjust stock across every SKU.", tech: "Not yet built as its own screen — stock is editable via the product form today.", status: "todo" },
+        { name: "Orders manager", plain: "See every order, update its status, add tracking notes.", tech: "/admin/orders: table with inline status-change dropdown, calls /orders PATCH which fires /send-email automatically.", status: "done" },
+        { name: "Dashboard KPIs", plain: "Revenue, order counts, best sellers at a glance.", tech: "/admin/dashboard: revenue, order count, low-stock count (from the settings-driven threshold), stuck-order flags, recent orders. Plain stat cards for now, not yet the hand-rolled SVG charts.", status: "doing" },
+        { name: "Settings page", plain: "Edit store-wide config without touching code or the database.", tech: "YOUR CALL, MID-BUILD: /admin/settings reads every row from the settings table, grouped by category, each with an inline editable value + Save — backed by /settings/all and /settings/:key.", status: "done" },
+        { name: "Roles page", plain: "Only a Super Admin can create new staff roles.", tech: "YOUR CALL, MID-BUILD: /admin/roles (locked to isSuperAdmin) lists roles and lets you build a new one from a permission checklist, via /roles.", status: "done" }
       ]
     },
     {
@@ -125,19 +130,19 @@ window.PROGRESS = {
       status: "doing",
       tasks: [
         { name: "Order + status emails", plain: "Email the customer when an order is placed and whenever its status changes.", tech: "send-email Edge Function deployed and wired into /orders' status-update path. Transport currently logs the email (Supabase free-plan SMTP isn't meant for transactional volume) — swappable to a Node/SMTP microservice without changing callers.", status: "doing" },
-        { name: "Stuck-order watchdog", plain: "Flag orders that have sat too long at 'shipped' so admin follows up.", tech: "pg_cron scheduled job surfaces stale orders on the admin dashboard.", status: "todo" }
+        { name: "Stuck-order watchdog", plain: "Flag orders that have sat too long at 'shipped' so admin follows up.", tech: "admin-stats already computes this on every dashboard load using the settings-driven stuck_order_hours value; a real pg_cron job to run it proactively (rather than on-view) not yet added.", status: "doing" }
       ]
     },
     {
       id: 10,
       name: "Making it beautiful",
       plain: "The animation, the polish, the award-winning feel.",
-      status: "todo",
+      status: "doing",
       tasks: [
-        { name: "Hero motion", plain: "The first thing you see — parallax books, one 3D moment.", tech: "GSAP ScrollTrigger parallax + lazy-loaded R3F scene, gated on prefers-reduced-motion.", status: "todo" },
-        { name: "Scroll-triggered product grid", plain: "Products animate in as you scroll, reorder smoothly on filter.", tech: "GSAP batched ScrollTrigger stagger + FLIP reorder.", status: "todo" },
-        { name: "Cart & checkout micro-interactions", plain: "Small satisfying moments — add-to-cart flight, button press, price count-up.", tech: "Framer Motion + GSAP for targeted micro-interactions.", status: "todo" },
-        { name: "Light & dark mode", plain: "Looks intentional in both.", tech: "CSS variable tokens switched via class, verified contrast both ways.", status: "todo" }
+        { name: "Hero motion", plain: "The first thing you see — parallax books, one 3D moment.", tech: "GSAP entrance stagger built; lazy-loaded @react-three/fiber scene (a floating open book) gated on prefers-reduced-motion and viewport width, with a static fallback.", status: "done" },
+        { name: "Scroll-triggered product grid", plain: "Products animate in as you scroll, reorder smoothly on filter.", tech: "GSAP ScrollTrigger stagger-in built (ShopGrid). FLIP reorder on filter/sort not yet added (no sort controls yet either).", status: "doing" },
+        { name: "Cart & checkout micro-interactions", plain: "Small satisfying moments — add-to-cart flight, button press, price count-up.", tech: "Button press-scale done globally; cart-icon flight animation and price count-up not yet built.", status: "doing" },
+        { name: "Light & dark mode", plain: "Looks intentional in both.", tech: "CSS variable tokens defined for both modes in globals.css; no theme toggle control built yet (follows OS preference only).", status: "doing" }
       ]
     },
     {
@@ -146,8 +151,8 @@ window.PROGRESS = {
       plain: "Final checks before this goes live.",
       status: "todo",
       tasks: [
-        { name: "SEO", plain: "Product pages, metadata, sitemap — findable on Google.", tech: "Next.js Metadata API per route, dynamic sitemap.xml, JSON-LD product schema.", status: "todo" },
-        { name: "Deployment notes", plain: "Clear instructions for pushing it live.", tech: "README with vercel deploy steps, supabase db push, functions deploy list, required env vars.", status: "todo" }
+        { name: "SEO", plain: "Product pages, metadata, sitemap — findable on Google.", tech: "Per-page metadata via generateMetadata done for home/product/category. Sitemap.xml and JSON-LD product schema not yet added.", status: "doing" },
+        { name: "Deployment notes", plain: "Clear instructions for pushing it live.", tech: "README written with local dev, db push, functions deploy, and required env vars.", status: "done" }
       ]
     }
   ],
@@ -157,20 +162,31 @@ window.PROGRESS = {
     { time: "19 Aug 2026", text: "App scaffolded (Next.js + TS + Tailwind v4), full library set installed, Supabase project linked, design.md / flow.md / memory.md written, this dashboard created.", kind: "done" },
     { time: "19 Aug 2026", text: "Full database schema written and pushed live via `supabase db push`: profiles, addresses, categories, products (with full-text search), variants, images, bundles, cart, orders, order items, status-event history, discounts. RLS enabled deny-all everywhere. Starter categories seeded.", kind: "done" },
     { time: "19 Aug 2026", text: "SETBACK, CAUGHT IMMEDIATELY: the first live test of the backend returned \"permission denied for table\" — service_role had RLS bypass but no explicit table GRANTs on the new tables. Fixed with a follow-up migration granting service_role full access plus default privileges for future tables; pushed and re-verified.", kind: "issue" },
-    { time: "19 Aug 2026", text: "Built and deployed all 9 Edge Functions per the resource-based architecture rule: product, category, cart, orders, tracking, payments, auth-profile, admin-stats, send-email. Every one uses the shared { success, message, data, meta, errors } envelope.", kind: "done" },
-    { time: "19 Aug 2026", text: "TESTED LIVE: curled /category and /product directly against the deployed functions — both return real data from the real database (7 seeded categories, empty product list as expected with nothing added yet).", kind: "done" },
-    { time: "19 Aug 2026", text: "NEXT UP: the storefront — design tokens in globals.css, shared UI components, cart store, home/shop/product/cart/checkout/tracking pages, then the admin console and the GSAP/Three.js motion pass.", kind: "note" }
+    { time: "19 Aug 2026", text: "Built and deployed the first 9 Edge Functions per the resource-based architecture rule: product, category, cart, orders, tracking, payments, auth-profile, admin-stats, send-email. Every one uses the shared { success, message, data, meta, errors } envelope.", kind: "done" },
+    { time: "19 Aug 2026", text: "TESTED LIVE: curled /category and /product directly against the deployed functions — both return real data from the real database.", kind: "done" },
+    { time: "19 Aug 2026", text: "YOUR FEEDBACK, MID-BUILD: nothing store-wide should be hardcoded — it all needs to live in an editable admin Settings area, segmented by category. And the platform needs multiple staff roles from day one, created only by a Super Admin, with ONE monolithic console UI (not a separate design per role) that just shows/hides screens by permission.", kind: "note" },
+    { time: "19 Aug 2026", text: "Added a real roles system (admin_roles table + profiles.admin_role_id, permissions checked via a single can() helper) and a generic settings key/value table seeded with site name, currency, shipping fee, thresholds, social links and default theme. Built and deployed two new Edge Functions, /settings and /roles, and updated every admin-scoped handler (product, category, orders, admin-stats) to check specific permissions instead of a hardcoded admin/staff role.", kind: "done" },
+    { time: "19 Aug 2026", text: "TESTED LIVE: curled /settings — returns the real public settings row-for-row from the database.", kind: "done" },
+    { time: "19 Aug 2026", text: "YOUR FEEDBACK, MID-BUILD: keep the design system centralized — one set of color/font/size tokens, changed in one place, everywhere (including admin) picks it up. Confirmed this was already the approach (globals.css tokens -> Tailwind utilities, no raw hex in components) and logged it as a standing rule so it doesn't drift later.", kind: "note" },
+    { time: "19 Aug 2026", text: "Built the full storefront: design tokens (warm literary palette, Fraunces + Inter, light/dark), header/footer/cart drawer, GSAP-animated hero with a lazy-loaded Three.js floating-book scene, shop grid with scroll stagger, product detail page with variant picker and bundle upsell, full cart page, guest-first checkout wired to /orders and /payments/initialize, order confirmation, and public order tracking (lookup + timeline) — no account required anywhere in that path.", kind: "done" },
+    { time: "19 Aug 2026", text: "Built sign-in/sign-up and an account page showing order history for anyone who does choose to create an account.", kind: "done" },
+    { time: "19 Aug 2026", text: "Built the admin console: permission-gated shell and nav, dashboard KPIs, categories manager, a first-pass products manager, an orders manager that updates status and triggers the customer email automatically, a Settings page that edits the new settings table in place, and a Roles page (Super Admin only) for creating new staff roles from a permission checklist.", kind: "done" },
+    { time: "19 Aug 2026", text: "SETBACK, CAUGHT BY THE BUILD: `next build` initially failed TypeScript checking because it was pulling the Deno-only Edge Function code (which uses `Deno.*` globals and `jsr:` imports) into the Next.js project. Fixed by excluding `supabase/` from tsconfig.json and giving the functions their own deno.jsonc; also fixed a CSS `@import` ordering warning and renamed the deprecated `middleware.ts` to `proxy.ts` per Next 16. Full production build now passes clean, including live data fetched from the real Edge Functions at build time.", kind: "issue" },
+    { time: "19 Aug 2026", text: "NEXT UP: bundle/variant editing and image upload in the product manager, the SVG dashboard charts, a theme toggle, FLIP grid reordering and cart-flight micro-interactions, sitemap/JSON-LD, then a full human click-through once Paystack keys are supplied.", kind: "note" }
   ],
 
   blockers: [
     "Paystack API keys not yet provided — /payments/initialize and /payments/webhook are deployed and correctly return a 503 (\"Paystack is not configured yet\") until PAYSTACK_SECRET_KEY is set via `supabase secrets set`. Checkout can be built and tested up to the payment step, but real payments won't process until the keys arrive.",
-    "No live preview will be run proactively per instruction — everything gets built end-to-end first, then handed over for you to test."
+    "No live preview will be run proactively per instruction — everything gets built end-to-end first, then handed over for you to test.",
+    "The products manager doesn't yet support variants, bundle building, or image upload — those need Supabase Storage wiring before a real catalog can be entered through the admin UI (products/categories can be created today, but with a single price/stock only)."
   ],
 
   decisions: [
     { q: "Framework: Next.js or Vite?", a: "Next.js 15 App Router — stronger native SEO (SSR/ISR, Metadata API, sitemap) than Vite for a public storefront.", open: false },
     { q: "How does order tracking work without an account?", a: "My call: order ID + email/phone lookup, no login required — matches the 'don't have to create an account' requirement.", open: true },
     { q: "How are bundles modeled?", a: "My call: bundle_items table referencing other products/variants with a price override, not a separate discount engine.", open: true },
-    { q: "How are order emails sent on the free Supabase plan?", a: "My call: custom send-email Edge Function now, built swappable to a Node/SMTP microservice later without changing callers.", open: true }
+    { q: "How are order emails sent on the free Supabase plan?", a: "My call: custom send-email Edge Function now, built swappable to a Node/SMTP microservice later without changing callers.", open: true },
+    { q: "How do roles work?", a: "Your instruction: admin_roles is a real, editable table — only a Super Admin can create/edit roles, and there is one console UI for everyone, gated by permission checks, not a design per role.", open: false },
+    { q: "Where does store config live?", a: "Your instruction: a generic settings table edited from an admin Settings page, segmented by category — never a code or database edit for things like currency, shipping fee or thresholds.", open: false }
   ]
 };

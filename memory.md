@@ -18,6 +18,31 @@ Persistent notes across sessions. Read this first when resuming work.
   `prefers-reduced-motion` and lazy-loaded, same pattern proven on The Turf Ball.
 - **Cart**: Zustand, persisted, guest-first.
 
+## Admin access
+- Super Admin account (full `*` permissions): `adenugaadewumi01@gmail.com` /
+  `Admin@1234`. Email pre-confirmed via migration so it can sign in immediately at
+  `/auth/sign-in`, then reach `/admin`.
+
+## Dummy catalog data
+- 44 products seeded via `supabase/migrations/20260819000300_seed_catalog.sql`
+  (books across all 7 categories + stationery), 3 bundles, a few variant-bearing
+  products (paperback/hardcover, journal colors). Cover art is placeholder
+  `picsum.photos` images seeded by slug — swap for real covers before going live
+  (picsum is allowed in `next.config.ts` remotePatterns purely for this placeholder
+  use).
+
+## Design system revision (user didn't like v1)
+- Replaced the original terracotta/gold "craft shop" palette with an editorial,
+  near-monochrome one (warm paper + near-black ink, one oxblood accent) and swapped
+  Fraunces for Cormorant Garamond as the display serif, paired with Inter. Full
+  rationale and token table in `design.md` §1 ("v2 — revised after design review").
+  Chosen via the `ui-ux-pro-max` skill's design-system search
+  (`bookstore ecommerce editorial premium literary`), then adapted (dropped the
+  suggested pink accent for oxblood — closer to "soothing, not gendered, not neon").
+- A light/dark theme toggle now lives in the footer (`ThemeToggle.tsx`), backed by
+  `data-theme` on `<html>` + localStorage, with a blocking init script in
+  `layout.tsx` to avoid a flash of the wrong theme.
+
 ## Credentials on file
 - Supabase URL: `https://buezylclznarpsawhiok.supabase.co`
 - Supabase project ref: `buezylclznarpsawhiok`
