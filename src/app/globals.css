@@ -1,0 +1,96 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  --color-canvas: #fbf7f0;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2ece1;
+  --color-ink: #211a14;
+  --color-ink-muted: #6b5f52;
+  --color-border: #e4dbc9;
+  --color-primary: #a8492a;
+  --color-primary-ink: #7a331b;
+  --color-accent: #3f6e5b;
+  --color-gold: #b98a2e;
+  --color-danger: #b3432e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-canvas: #0f0d0b;
+    --color-surface: #1a1613;
+    --color-surface-muted: #221d19;
+    --color-ink: #f3ece1;
+    --color-ink-muted: #b3a797;
+    --color-border: #332c25;
+    --color-primary: #d97c55;
+    --color-primary-ink: #f0a57f;
+    --color-accent: #6fa98c;
+    --color-gold: #d9ac5c;
+    --color-danger: #e2745a;
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-canvas: #0f0d0b;
+  --color-surface: #1a1613;
+  --color-surface-muted: #221d19;
+  --color-ink: #f3ece1;
+  --color-ink-muted: #b3a797;
+  --color-border: #332c25;
+  --color-primary: #d97c55;
+  --color-primary-ink: #f0a57f;
+  --color-accent: #6fa98c;
+  --color-gold: #d9ac5c;
+  --color-danger: #e2745a;
+}
+
+@theme inline {
+  --color-canvas: var(--color-canvas);
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-border: var(--color-border);
+  --color-primary: var(--color-primary);
+  --color-primary-ink: var(--color-primary-ink);
+  --color-accent: var(--color-accent);
+  --color-gold: var(--color-gold);
+  --color-danger: var(--color-danger);
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-primary) 30%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
