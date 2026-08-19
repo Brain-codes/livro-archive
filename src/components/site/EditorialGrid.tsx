@@ -21,8 +21,36 @@ export function EditorialGrid({ panels }: { panels: EditorialPanelData[] }) {
   const [lead, ...rest] = panels;
   if (!lead) return null;
 
+  // With fewer than three panels the two-column bento would leave a hole, so the
+  // layout degrades: one panel goes full width, two split evenly.
+  if (panels.length === 1) {
+    return (
+      <Section>
+        <EditorialPanel panel={lead} size="lead" className="min-h-[420px] lg:min-h-[520px]" priority />
+      </Section>
+    );
+  }
+
+  if (panels.length === 2) {
+    return (
+      <Section>
+        <div className="grid gap-4 lg:grid-cols-2">
+          {panels.map((panel, i) => (
+            <EditorialPanel
+              key={panel.href + panel.title}
+              panel={panel}
+              size="lead"
+              className="min-h-[420px] lg:min-h-[560px]"
+              priority={i === 0}
+            />
+          ))}
+        </div>
+      </Section>
+    );
+  }
+
   return (
-    <section className="mx-auto max-w-[1440px] px-5 pb-20">
+    <Section>
       <div className="grid gap-4 lg:grid-cols-2">
         <EditorialPanel
           panel={lead}
@@ -41,8 +69,12 @@ export function EditorialGrid({ panels }: { panels: EditorialPanelData[] }) {
           ))}
         </div>
       </div>
-    </section>
+    </Section>
   );
+}
+
+function Section({ children }: { children: React.ReactNode }) {
+  return <section className="mx-auto max-w-[1440px] px-5 pb-20">{children}</section>;
 }
 
 function EditorialPanel({

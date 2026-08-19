@@ -108,7 +108,13 @@ export default async function CategoryPage({
           {current.name}
         </h1>
 
-        <CategoryStrip categories={categories} covers={covers} activeSlug={current.slug} />
+        <CategoryStrip
+          categories={categories.filter(
+            (c) => c.id === current.id || all.some((p) => p.category_id === c.id),
+          )}
+          covers={covers}
+          activeSlug={current.slug}
+        />
 
         <Suspense fallback={<div className="py-24 text-center text-ink-muted">Loading…</div>}>
           <ShopGrid products={products} />

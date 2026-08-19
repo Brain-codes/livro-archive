@@ -43,6 +43,10 @@ export default async function ShopPage({
       (p) => p.category_id === category.id && p.product_images?.[0]?.url,
     )?.product_images?.[0]?.url;
   }
+  // Don't advertise a category with nothing active in it.
+  const stockedCategories = categories.filter((c) =>
+    products.some((p) => p.category_id === c.id),
+  );
 
   return (
     <>
@@ -60,7 +64,7 @@ export default async function ShopPage({
         </h1>
 
         {!q && (
-          <CategoryStrip categories={categories} covers={covers} />
+          <CategoryStrip categories={stockedCategories} covers={covers} />
         )}
 
         <Suspense fallback={<div className="py-24 text-center text-ink-muted">Loading…</div>}>
